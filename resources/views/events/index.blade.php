@@ -1,3 +1,4 @@
+<?php dd($events); ?>
 @extends('layouts.app')
 
 @section('content')

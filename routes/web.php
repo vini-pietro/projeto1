@@ -39,7 +39,7 @@ Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
 // Rotas para eventos (apenas usuários autenticados)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/events', [EventController::class, 'index'])->name('events.index');
+    Route::get('/event', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
 });
 

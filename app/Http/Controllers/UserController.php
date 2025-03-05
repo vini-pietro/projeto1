@@ -39,7 +39,6 @@ class UserController extends Controller
 {
     return view('users.create'); // Carrega a view para adicionar um novo usuário
 }
-
 public function store(Request $request)
 {
     $request->validate([

@@ -20,7 +20,7 @@
                 <div class="card-body">
                     <h5 class="card-title">Upcoming Events</h5>
                     <p class="card-text">Stay updated with the latest events and activities at Career Training College.</p>
-                    <a href="/event" class="btn btn-success">View Events</a>
+                    <a href="{{ route('events.index') }}" class="btn btn-success">View Events</a>
                 </div>
             </div>
         </div>

@@ -10,21 +10,21 @@
 <body>
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2e1501;">
     <div class="container">
-        <a class="navbar-brand" href="{{ url('/') }}">Projeto1</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="{{ route('home') }}">Projeto1</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 @guest
-                    <!-- Somente Login visível para usuários não autenticados -->
+                    <!-- Apenas exibe o Login se o usuário não estiver autenticado -->
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('login') }}">Login</a>
                     </li>
                 @else
-                    <!-- Itens de menu visíveis para usuários autenticados -->
+                    <!-- Itens visíveis apenas para usuários autenticados -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                        <a class="nav-link" href="{{ route('dashboard') }}">Dashboard</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('about-us') }}">About Us</a>
@@ -35,12 +35,20 @@
                     <li class="nav-item">
                         <a class="nav-link" href="{{ route('events.index') }}">Events</a>
                     </li>
+
+                    <!-- Menu específico para administradores -->
+                    @if(auth()->user()->role === 'admin')
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ route('users.index') }}">Manage Members</a>
+                        </li>
+                    @endif
+
+                    <!-- Botão de Logout -->
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('logout') }}"
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             Exit
                         </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                        <form id="logout-form" action="{{ route('auth.logout') }}" method="POST" class="d-none">
                             @csrf
                         </form>
                     </li>
@@ -49,6 +57,7 @@
         </div>
     </div>
 </nav>
+
 <div class="container mt-5">
     @yield('content')
 </div>

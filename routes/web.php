@@ -1,45 +1,37 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\HomeController;
+use Illuminate\Support\Facades\Auth;
 
+// Página inicial (acessível a todos)
 Route::get('/home', function () {
     return view('home');
-});
+})->name('home');
 
-Route::get('/login', function () {
-    return view('login');
-});
+// Rotas públicas (acessíveis a todos)
+Route::view('/login', 'login')->name('login');
+Route::view('/about-us', 'about')->name('about-us');
+Route::view('/contact-us', 'contact')->name('contact-us');
 
-Route::get('/about-us', function () {
-    return view('about');
-});
-
-Route::get('/contact-us', function () {
-    return view('contact');
-});
-
-Route::get('/event', function () {
-    return view('event');
-});
-
-Route::get('/view-members', function () {
-    return view('view-members');
-});
-
-Route::get('/manage-members', function () {
-    return view('manage-members');
-});
-
+// Autenticação
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-use App\Http\Controllers\EventController;
-Route::get('/events', [EventController::class, 'index'])->name('events.index');
-
-// Rotas para eventos (apenas usuários autenticados)
+// Página inicial após login (redireciona para dashboard)
 Route::middleware(['auth'])->group(function () {
-    Route::get('/event', [EventController::class, 'index'])->name('events.index');
+    Route::get('/dashboard', [HomeController::class, 'index'])->name('dashboard');
+});
+
+// Rotas para membros (apenas usuários autenticados)
+Route::middleware(['auth'])->group(function () {
+    Route::view('/view-members', 'view-members')->name('view-members');
+    Route::view('/manage-members', 'manage-members')->name('manage-members');
+});
+
+// Rotas para eventos (usuários autenticados)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/events', [EventController::class, 'index'])->name('events.index');
     Route::get('/events/{id}', [EventController::class, 'show'])->name('events.show');
 });
 
@@ -50,4 +42,23 @@ Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/events/{id}/edit', [EventController::class, 'edit'])->name('events.edit');
     Route::put('/events/{id}', [EventController::class, 'update'])->name('events.update');
     Route::delete('/events/{id}', [EventController::class, 'destroy'])->name('events.destroy');
+});
+
+// Rota de logout
+Route::post('/home', function () {
+    Auth::logout();
+    return redirect('/home'); // Redireciona para Home após logout
+})->name('logout');
+use App\Http\Controllers\UserController;
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/manage-members', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::put('/users/{id}/change-role', [UserController::class, 'changeRole'])->name('users.changeRole');
+});
+
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/manage-members', [UserController::class, 'index'])->name('users.index');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::put('/users/{id}/change-role', [UserController::class, 'changeRole'])->name('users.changeRole');
 });

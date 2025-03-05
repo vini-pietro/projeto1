@@ -8,26 +8,47 @@
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg navbar-light bg-light" style="background-color: #556B2F;">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="/home">
-            <img src="{{ asset('images/logo.png') }}" alt="Career Training College" height="50">
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+<nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #2e1501;">
+    <div class="container">
+        <a class="navbar-brand" href="{{ url('/home') }}">Projeto1</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav">
-                <li class="nav-item"><a class="nav-link text-white" href="/home">Home</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="/login">Login</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="/about-us">About Us</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="/contact-us">Contact Us</a></li>
-                <li class="nav-item"><a class="nav-link text-white" href="/event">Event</a></li>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                @guest
+                    <!-- Somente Login visível para usuários não autenticados -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('login') }}">Login</a>
+                    </li>
+                @else
+                    <!-- Itens de menu visíveis para usuários autenticados -->
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('home') }}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('about-us') }}">About Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('contact-us') }}">Contact Us</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('events.index') }}">Events</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ route('logout') }}"
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Exit
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                        </form>
+                    </li>
+                @endguest
             </ul>
         </div>
     </div>
 </nav>
-
 <div class="container mt-5">
     @yield('content')
 </div>

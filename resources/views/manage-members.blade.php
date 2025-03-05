@@ -2,7 +2,11 @@
 
 @section('content')
 <div class="container">
-    <h2 class="mb-4">Manage Members</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Manage Members</h2>
+        <a href="{{ route('users.create') }}" class="btn btn-primary">New Member</a>
+    </div>
+    
     <table class="table table-striped">
         <thead>
             <tr>
@@ -19,7 +23,7 @@
                     <td>{{ $user->id }}</td>
                     <td>{{ $user->name }}</td>
                     <td>{{ $user->email }}</td>
-                    <td>{{ $user->role }}</td>
+                    <td>{{ ucfirst($user->role) }}</td>
                     <td>
                         <!-- Botão de excluir usuário -->
                         <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
@@ -29,13 +33,13 @@
                         </form>
                         
                         <!-- Botão de alterar categoria -->
-                        @if($user->role === 'user')
-                            <form action="{{ route('users.changeRole', $user->id) }}" method="POST" class="d-inline">
-                                @csrf
-                                @method('PUT')
-                                <button type="submit" class="btn btn-warning btn-sm">Change Categorie</button>
-                            </form>
-                        @endif
+                        <form action="{{ route('users.changeRole', $user->id) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('PUT')
+                            <button type="submit" class="btn btn-warning btn-sm">
+                                {{ $user->role === 'user' ? 'Change to Admin' : 'Change to User' }}
+                            </button>
+                        </form>
                     </td>
                 </tr>
             @endforeach

@@ -21,17 +21,23 @@ class EventController extends Controller
 
     // Salva um novo evento no banco de dados
     public function store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required',
-            'description' => 'required',
-            'event_date' => 'required|date',
-            'location' => 'required',
-        ]);
+{
+    $request->validate([
+        'title' => 'required|string|max:255',
+        'description' => 'required|string',
+        'event_date' => 'required|date',
+        'location' => 'required',
+    ]);
 
-        Event::create($request->all());
-        return redirect('/events')->with('success', 'Event created successfully!');
-    }
+    Event::create([
+        'title' => $request->title,
+        'description' => $request->description,
+        'event_date' => $request->event_date, 
+        'location' => $request->location, 
+    ]);
+
+    return redirect()->route('events.index')->with('success', 'Event created successfully!');
+}
 
     // Exibe detalhes de um evento específico
     public function show($id)

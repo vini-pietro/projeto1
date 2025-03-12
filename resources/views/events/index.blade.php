@@ -7,6 +7,11 @@
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if(auth()->user() && auth()->user()->role === 'admin')
+    <div class="mb-3 text-end">
+        <a href="{{ route('events.create') }}" class="btn btn-success">+ Create Event</a>
+    </div>
+@endif
 
     @if($events->isEmpty())
         <p class="text-center">No events available.</p>

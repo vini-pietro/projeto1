@@ -11,10 +11,10 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Nome</th>
+                <th>Nane</th>
                 <th>Email</th>
-                <th>Tipo</th>
-                <th>Ações</th>
+                <th>Type</th>
+                <th>Actions</th>
             </tr>
         </thead>
         <tbody>

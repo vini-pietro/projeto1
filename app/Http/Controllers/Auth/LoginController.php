@@ -25,8 +25,15 @@ class LoginController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/home';
-
+    // protected $redirectTo = '/home'; Rota para direcionar o login para a pagina de home
+    protected function redirectTo()
+    {
+        if (auth()->user()->role === 'admin') {
+            return '/dashboard'; // Redireciona admins para o painel
+        }
+        return '/events'; // Redireciona usuários para a página de eventos
+    }
+    
     /**
      * Create a new controller instance.
      *

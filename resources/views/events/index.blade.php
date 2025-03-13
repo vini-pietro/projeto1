@@ -1,48 +1,53 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Upcoming Events</h1>
+<div class="container">
+    <h2 class="mb-4">Available Events</h2>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    @if(auth()->check() && auth()->user()->user_type === 'admin')
+        <a href="{{ route('events.create') }}" class="btn btn-primary mb-3">Create New Event</a>
     @endif
-    @if(auth()->user() && auth()->user()->role === 'admin')
-    <div class="mb-3 text-end">
-        <a href="{{ route('events.create') }}" class="btn btn-success">+ Create Event</a>
-    </div>
-@endif
 
-    @if($events->isEmpty())
-        <p class="text-center">No events available.</p>
-    @else
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @foreach($events as $event)
-                <div class="col">
-                    <div class="card h-100 shadow-sm">
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">{{ $event->title }}</h5>
-                            <p class="card-text flex-grow-1">{{ $event->description }}</p>
-                            <p class="text-muted"><strong>Date:</strong> {{ \Carbon\Carbon::parse($event->event_date)->format('d/m/Y H:i') }}</p>
-                            <p class="text-muted"><strong>Location:</strong> {{ $event->location }}</p>
+    <div class="row">
+        @foreach($events as $event)
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    <img src="{{ asset('images/' . $event->image) }}" class="card-img-top" alt="{{ $event->title }}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ $event->title }}</h5>
+                        <!-- Exibição da descrição breve no card -->
+                        <p class="card-text">{{ Str::limit($event->description, 100, '...') }}</p>
+                        <p><strong>Location:</strong> {{ $event->location }}</p>
+                        <p><strong>Date:</strong> {{ $event->event_date }}</p>
+                        <p><strong>Participants:</strong> {{ $event->users->count() }}</p>
 
-                            <!-- Opções baseadas no tipo de usuário -->
-                            @if(auth()->check() && auth()->user()->role === 'admin')
-                                <a href="{{ route('events.edit', $event->id) }}" class="btn btn-warning btn-sm">Edit</a>
-                                <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
-                                </form>
-                            @else
-                                <a href="{{ route('events.show', $event->id) }}" class="btn btn-success btn-sm mt-auto">More Info</a>
-                            @endif
-                        </div>
+                        <!-- Botão para ver mais detalhes -->
+                        <a href="{{ route('events.show', $event->id) }}" class="btn btn-primary">View Details</a>
+
+                        @auth
+                            <form action="{{ route('events.join', $event->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                <button type="submit" class="btn btn-success">
+                                    {{ auth()->user()->events->contains($event->id) ? 'Leave Event' : 'Join Event' }}
+                                </button>
+                            </form>
+                        @endauth
+
+                        @if(auth()->check() && auth()->user()->user_type === 'admin')
+                            <a href="{{ route('events.edit', $event->id) }}" class="btn btn-warning">Edit</a>
+
+                            <form action="{{ route('events.destroy', $event->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this event?')">
+                                    Delete
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </div>
-            @endforeach
-        </div>
-    @endif
+            </div>
+        @endforeach
+    </div>
 </div>
-<br><br>
 @endsection

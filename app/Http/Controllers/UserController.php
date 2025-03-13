@@ -28,33 +28,89 @@ class UserController extends Controller
     public function changeRole($id)
     {
         $user = User::findOrFail($id);
-        
-        // Alternar entre 'user' e 'admin'
         $user->role = $user->role === 'user' ? 'admin' : 'user';
         $user->save();
 
         return redirect()->route('users.index')->with('success', 'Permissão alterada com sucesso!');
     }
+
+    // Exibir o formulário para criação de um novo usuário
     public function create()
-{
-    return view('users.create'); // Carrega a view para adicionar um novo usuário
-}
-public function store(Request $request)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:users',
-        'password' => 'required|min:6',
-        'role' => 'required|in:user,admin',
-    ]);
+    {
+        return view('users.create');
+    }
 
-    User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => Hash::make($request->password),
-        'role' => $request->role,
-    ]);
+    // Armazena um novo usuário no banco de dados
+    public function store(Request $request)
+    {
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'age' => 'required|integer|min:1',
+            'user_type' => 'required|in:admin,user',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'professional_summary' => 'nullable|string',
+        ]);
 
-    return redirect()->route('users.index')->with('success', 'Novo usuário criado com sucesso!');
-}
+        User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'age' => $request->age,
+            'user_type' => $request->user_type,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'professional_summary' => $request->professional_summary,
+        ]);
+
+        return redirect()->route('users.index')->with('success', 'Novo usuário criado com sucesso!');
+    }
+
+    // Exibir o formulário de edição de um usuário
+    public function edit($id)
+    {
+        $user = User::findOrFail($id);
+        return view('users.edit', compact('user'));
+    }
+
+    // Atualizar um usuário existente
+    public function update(Request $request, $id)
+    {
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'age' => 'required|integer|min:1',
+            'user_type' => 'required|in:admin,user',
+            'email' => 'required|email|unique:users,email,' . $id,
+            'password' => 'nullable|min:6',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'professional_summary' => 'nullable|string',
+        ]);
+
+        $user->update([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'age' => $request->age,
+            'user_type' => $request->user_type,
+            'email' => $request->email,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'professional_summary' => $request->professional_summary,
+        ]);
+
+        if ($request->filled('password')) {
+            $user->update([
+                'password' => Hash::make($request->password),
+            ]);
+        }
+
+        return redirect()->route('users.index')->with('success', 'Usuário atualizado com sucesso!');
+    }
 }

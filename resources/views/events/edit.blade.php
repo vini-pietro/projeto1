@@ -23,7 +23,11 @@
             <label class="form-label">Location</label>
             <input type="text" class="form-control" name="location" value="{{ $event->location }}" required>
         </div>
+        <div>
+            <label for="image">Alterar Imagem</label>
+        <input type="file" class="form-control" name="image">
+</div><br>
         <button type="submit" class="btn btn-warning w-100">Update Event</button>
     </form>
-</div>
+</div><br>
 @endsection
